@@ -1,0 +1,28 @@
+# Dependency directories
+node_modules/
+
+# Environment files with sensitive credentials (API keys, secrets)
+.env
+.env.*
+!.env.example
+
+# Local data store and database dumps
+data_store.json
+*.sqlite
+*.sqlite3
+*.db
+
+# Uploaded media and user-submitted files
+uploads/*
+!uploads/.gitkeep
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS metadata
+.DS_Store
+Thumbs.db
