@@ -10,8 +10,13 @@ const __dirname = path.dirname(__filename);
 let pool = null;
 let isPostgres = false;
 
+import os from 'os';
+
 // Embedded relational storage fallback if PostgreSQL is not available
-const DATA_FILE = path.join(__dirname, '..', 'data_store.json');
+const BUNDLED_DATA_FILE = path.join(__dirname, '..', 'data_store.json');
+const DATA_FILE = process.env.VERCEL
+  ? path.join(os.tmpdir(), 'data_store.json')
+  : BUNDLED_DATA_FILE;
 
 let inMemoryStore = {
   users: [],
@@ -197,6 +202,10 @@ function loadStoreFromFile() {
     if (fs.existsSync(DATA_FILE)) {
       const raw = fs.readFileSync(DATA_FILE, 'utf8');
       inMemoryStore = JSON.parse(raw);
+    } else if (fs.existsSync(BUNDLED_DATA_FILE)) {
+      const raw = fs.readFileSync(BUNDLED_DATA_FILE, 'utf8');
+      inMemoryStore = JSON.parse(raw);
+      saveStoreToFile();
     } else {
       seedDefaultStore();
     }

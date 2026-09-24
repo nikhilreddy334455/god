@@ -31,10 +31,19 @@ const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
-// Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, '..', 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+import os from 'os';
+
+// Ensure uploads directory exists (safe for serverless read-only filesystems)
+const uploadsDir = process.env.VERCEL
+  ? path.join(os.tmpdir(), 'uploads')
+  : path.join(__dirname, '..', 'uploads');
+
+try {
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+} catch (dirErr) {
+  console.warn('Could not initialize uploads directory in api.js:', dirErr.message);
 }
 
 // Multer storage and file filter (Section 9: max 5MB, JPEG, PNG, WEBP)
